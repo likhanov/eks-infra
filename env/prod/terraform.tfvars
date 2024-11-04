@@ -2,8 +2,8 @@ region       = "us-east-1"
 environment  = "prod"
 project_name = "mediterraneum"
 cluster_version = "1.31"
-vpc_id = "vpc-0d01e1070313a9fef"
+vpc_id = "vpc-0760df9edb1358afa"
 private_subnets = [
-  "subnet-01ae5d2f1bc8f372e",
-  "subnet-0115a3886c12218f6",
+  "subnet-0640efd620a9315d1",
+  "subnet-0497190a1c5bad220",
 ]
