@@ -29,5 +29,5 @@ module "eks" {
 module "karpenter" {
   source = "./modules/karpenter"
 
-  tags            = local.tags
+  tags = local.tags
 }
