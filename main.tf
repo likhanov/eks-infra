@@ -1,4 +1,3 @@
-
 locals {
   tags = {
     Project     = var.project_name
@@ -28,6 +27,7 @@ module "eks" {
 
 module "karpenter" {
   source = "./modules/karpenter"
-
-  tags = local.tags
+  
+  region = var.region
+  tags   = local.tags
 }
