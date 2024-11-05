@@ -1,10 +1,10 @@
 provider "aws" {
   region = var.region
+  alias  = "virginia"
 }
 
 provider "aws" {
   region = var.region
-  alias  = "virginia"
 }
 
 provider "helm" {
