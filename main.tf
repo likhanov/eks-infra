@@ -1,3 +1,16 @@
+
+locals {
+  tags = {
+    Project     = var.project_name
+    Environment = var.environment
+    Managed-by  = "terraform"
+  }
+}
+
+################################################################################
+# EKS Module
+################################################################################
+
 module "eks" {
   source = "./modules/eks"
 
@@ -6,13 +19,15 @@ module "eks" {
   cluster_version = var.cluster_version
   vpc_id          = var.vpc_id
   private_subnets = var.private_subnets
-  tags = {
-    Project     = var.project_name
-    Environment = var.environment
-    Managed-by  = "terraform"
-  }
+  tags            = local.tags
 }
 
-data "aws_eks_cluster_auth" "this" {
-  name = module.eks.cluster_name
+################################################################################
+# Karpenter
+################################################################################
+
+module "karpenter" {
+  source = "./modules/karpenter"
+
+  tags            = local.tags
 }
