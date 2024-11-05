@@ -27,7 +27,7 @@ module "eks" {
 
 module "karpenter" {
   source = "./modules/karpenter"
-  
+
   region = var.region
   tags   = local.tags
 }
