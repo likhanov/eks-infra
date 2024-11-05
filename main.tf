@@ -34,4 +34,7 @@ module "karpenter" {
   cluster_endpoint       = module.eks.cluster_endpoint
   cluster_ca_certificate = module.eks.cluster_ca_certificate
   tags                   = local.tags
+  depends_on = [
+    eks
+  ]
 }
