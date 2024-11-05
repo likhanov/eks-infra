@@ -9,15 +9,15 @@ variable "cluster_name" {
 }
 
 variable "node_iam_role_arn" {
-  type        = string
+  type = string
 }
 
 variable "cluster_endpoint" {
-  type        = string
+  type = string
 }
 
 variable "cluster_ca_certificate" {
-  type        = string
+  type = string
 }
 
 variable "tags" {
