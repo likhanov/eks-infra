@@ -6,10 +6,10 @@ module "karpenter" {
   source  = "terraform-aws-modules/eks/aws//modules/karpenter"
   version = "20.28.0"
 
-  cluster_name = module.eks.cluster_name
+  cluster_name = var.cluster_name
 
   create_node_iam_role = false
-  node_iam_role_arn    = module.eks.eks_managed_node_groups["karpenter"].iam_role_arn
+  node_iam_role_arn    = var.node_iam_role_arn
 
   create_access_entry = false
 
@@ -50,12 +50,12 @@ resource "kubectl_manifest" "karpenter_node_class" {
       role: ${module.karpenter.node_iam_role_name}
       subnetSelectorTerms:
         - tags:
-            karpenter.sh/discovery: ${module.eks.cluster_name}
+            karpenter.sh/discovery: ${var.cluster_name}
       securityGroupSelectorTerms:
         - tags:
-            karpenter.sh/discovery: ${module.eks.cluster_name}
+            karpenter.sh/discovery: ${var.cluster_name}
       tags:
-        karpenter.sh/discovery: ${module.eks.cluster_name}
+        karpenter.sh/discovery: ${var.cluster_name}
   YAML
 
   depends_on = [

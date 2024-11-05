@@ -28,6 +28,10 @@ module "eks" {
 module "karpenter" {
   source = "./modules/karpenter"
 
-  region = var.region
-  tags   = local.tags
+  region                 = var.region
+  cluster_name           = module.eks.cluster_name
+  node_iam_role_arn      = module.eks.iam_role_arn
+  cluster_endpoint       = module.eks.cluster_endpoint
+  cluster_ca_certificate = module.eks.cluster_ca_certificate
+  tags                   = local.tags
 }
