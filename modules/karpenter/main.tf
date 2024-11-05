@@ -8,11 +8,6 @@ module "karpenter" {
 
   cluster_name = var.cluster_name
 
-  create_node_iam_role = false
-  node_iam_role_arn    = var.node_iam_role_arn
-
-  create_access_entry = false
-
   tags = var.tags
 }
 
