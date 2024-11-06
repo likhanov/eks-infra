@@ -40,8 +40,7 @@ resource "kubectl_manifest" "karpenter_node_class" {
     metadata:
       name: default
     spec:
-      amiSelectorTerms: 
-        - alias: al2@latest
+      amiFamily: AL2023
       role: ${module.karpenter.node_iam_role_name}
       subnetSelectorTerms:
         - tags:
