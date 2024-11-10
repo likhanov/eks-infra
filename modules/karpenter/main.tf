@@ -7,6 +7,11 @@ module "karpenter" {
   version = "20.28.0"
 
   cluster_name = var.cluster_name
+  
+  enable_v1_permissions = true
+  
+  enable_pod_identity             = true
+  create_pod_identity_association = true
 
   tags = var.tags
 }
