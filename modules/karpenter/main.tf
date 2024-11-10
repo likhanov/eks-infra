@@ -4,7 +4,7 @@ data "aws_ecrpublic_authorization_token" "token" {
 
 module "karpenter" {
   source  = "terraform-aws-modules/eks/aws//modules/karpenter"
-  version = "20.28.0"
+  version = "20.29.0"
 
   cluster_name = var.cluster_name
   
@@ -40,7 +40,7 @@ resource "helm_release" "karpenter" {
 
 resource "kubectl_manifest" "karpenter_node_class" {
   yaml_body = <<-YAML
-    apiVersion: karpenter.k8s.aws/v1beta1
+    apiVersion: karpenter.k8s.aws/v1
     kind: EC2NodeClass
     metadata:
       name: default
@@ -64,7 +64,7 @@ resource "kubectl_manifest" "karpenter_node_class" {
 
 resource "kubectl_manifest" "karpenter_node_pool" {
   yaml_body = <<-YAML
-    apiVersion: karpenter.sh/v1beta1
+    apiVersion: karpenter.k8s.aws/v1
     kind: NodePool
     metadata:
       name: default
