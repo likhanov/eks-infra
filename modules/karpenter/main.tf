@@ -44,8 +44,9 @@ resource "kubectl_manifest" "karpenter_node_class" {
     kind: EC2NodeClass
     metadata:
       name: default
+      annotations:
+        kubernetes.io/description: "General purpose EC2NodeClass for running Amazon Linux nodes"
     spec:
-      amiFamily: AL2023
       role: ${module.karpenter.node_iam_role_name}
       subnetSelectorTerms:
         - tags:
@@ -53,8 +54,8 @@ resource "kubectl_manifest" "karpenter_node_class" {
       securityGroupSelectorTerms:
         - tags:
             karpenter.sh/discovery: ${var.cluster_name}
-      tags:
-        karpenter.sh/discovery: ${var.cluster_name}
+      amiSelectorTerms:
+        - alias: al2023@latest
   YAML
 
   depends_on = [
@@ -62,35 +63,75 @@ resource "kubectl_manifest" "karpenter_node_class" {
   ]
 }
 
-resource "kubectl_manifest" "karpenter_node_pool" {
+resource "kubectl_manifest" "karpenter_node_pool_amd64" {
   yaml_body = <<-YAML
-    apiVersion: karpenter.k8s.aws/v1
+    apiVersion: karpenter.sh/v1
     kind: NodePool
     metadata:
-      name: default
+      name: amd64
+      annotations:
+        kubernetes.io/description: "NodePool for amd64 workloads"
     spec:
       template:
         spec:
-          nodeClassRef:
-            name: default
           requirements:
-            - key: "karpenter.k8s.aws/instance-category"
+            - key: kubernetes.io/arch
+              operator: In
+              values: ["amd64"]
+            - key: kubernetes.io/os
+              operator: In
+              values: ["linux"]
+            - key: karpenter.sh/capacity-type
+              operator: In
+              values: ["on-demand"]
+            - key: karpenter.k8s.aws/instance-category
               operator: In
               values: ["c", "m", "r"]
-            - key: "karpenter.k8s.aws/instance-cpu"
-              operator: In
-              values: ["4", "8", "16", "32"]
-            - key: "karpenter.k8s.aws/instance-hypervisor"
-              operator: In
-              values: ["nitro"]
-            - key: "karpenter.k8s.aws/instance-generation"
+            - key: karpenter.k8s.aws/instance-generation
               operator: Gt
               values: ["2"]
-      limits:
-        cpu: 1000
-      disruption:
-        consolidationPolicy: WhenEmptyOrUnderutilized
-        consolidateAfter: 30s
+          nodeClassRef:
+            group: karpenter.k8s.aws
+            kind: EC2NodeClass
+            name: default
+  YAML
+
+  depends_on = [
+    kubectl_manifest.karpenter_node_class
+  ]
+}
+
+resource "kubectl_manifest" "karpenter_node_pool_arm64" {
+  yaml_body = <<-YAML
+    apiVersion: karpenter.sh/v1
+    kind: NodePool
+    metadata:
+      name: arm64
+      annotations:
+        kubernetes.io/description: "NodePool for arm64 workloads"
+    spec:
+      template:
+        spec:
+          requirements:
+            - key: kubernetes.io/arch
+              operator: In
+              values: ["arm64"]
+            - key: kubernetes.io/os
+              operator: In
+              values: ["linux"]
+            - key: karpenter.sh/capacity-type
+              operator: In
+              values: ["on-demand"]
+            - key: karpenter.k8s.aws/instance-category
+              operator: In
+              values: ["c", "a"]
+            - key: karpenter.k8s.aws/instance-generation
+              operator: Gt
+              values: ["2"]
+          nodeClassRef:
+            group: karpenter.k8s.aws
+            kind: EC2NodeClass
+            name: default
   YAML
 
   depends_on = [
